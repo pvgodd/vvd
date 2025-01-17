@@ -31,33 +31,41 @@ def select_attack():
 def run_attack(attack_type):
     data = request.get_json()
     url = data.get('url')
+    cmd = data.get('cmd')
 
     if not url:
         return jsonify({"error": "URL is required"}), 400
 
+    if not cmd:
+        return jsonify({"error": "Command is required"}), 400
+
     try:
+        # 공격 종류에 따라 적합한 스크립트를 선택하여 명령어 실행
         if attack_type == "Atlassian Confluence":
-            result = subprocess.run(['python3', 'tools/confluence_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/confluence_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Apache Struts2":
-            result = subprocess.run(['python3', 'tools/struts2_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/struts2_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Apache OFBiz":
-            result = subprocess.run(['python3', 'tools/ofbiz_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/ofbiz_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Cisco":
-            result = subprocess.run(['python3', 'tools/cisco_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/cisco_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Citrix Bleed":
-            result = subprocess.run(['python3', 'tools/citrix_bleed_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/citrix_bleed_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "ProxyShell":
-            result = subprocess.run(['python3', 'tools/proxyshell_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/proxyshell_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "ProxyNotShell":
-            result = subprocess.run(['python3', 'tools/proxynotshell_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/proxynotshell_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "ShellShock":
-            result = subprocess.run(['python3', 'tools/shellshock_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/shellshock_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "VMware":
-            result = subprocess.run(['python3', 'tools/vmware_attack.py', url], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/vmware_attack.py', '-url', url, '--cmd', cmd], capture_output=True, text=True)
         else:
             return jsonify({"error": "Invalid attack type"}), 400
 
-        return jsonify({"output": result.stdout})
+        # 공격 결과를 JSON 응답으로 반환
+        result_output = result.stdout if result.returncode == 0 else result.stderr
+        return jsonify({"output": result_output})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -84,4 +92,4 @@ def download_pdf():
 
 # 서버 실행
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run( port=80, debug= True, host = '0.0.0.0')
