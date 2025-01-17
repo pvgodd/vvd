@@ -58,7 +58,7 @@ def run_attack(attack_type):
         elif attack_type == "ShellShock":
             result = subprocess.run(['python3', 'tools/shellshock_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "VMware":
-            result = subprocess.run(['python3', 'tools/vmware_attack.py', '-url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/vmware_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         else:
             return jsonify({"error": "Invalid attack type"}), 400
 
