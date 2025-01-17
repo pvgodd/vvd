@@ -42,11 +42,12 @@
             background-color: rgb(0, 157, 220);
             color: white;
         }
-        #urlInput {
+        #urlInput, #cmdInput {
             font-size: 16px;
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #ced4da;
+            margin-top: 10px;
         }
         button {
             font-size: 16px;
@@ -104,13 +105,44 @@
             {% endfor %}
         </div>
 
-        <p class="text-center step">STEP 2. Enter the target URL.</p>
-        <div>
-            <label for="urlInput">Enter Target URL:</label>
-            <input type="text" id="urlInput" class="form-control" placeholder="http://mirteam.kr">
-        </div>
+	<p class="text-center step">STEP 2. Enter the target URL.</p>
+	<div>
+    		<label for="urlInput">Enter Target URL:</label>
+    		<input type="text" id="urlInput" class="form-control" placeholder="http://mirteam.kr">
+    
+    		<!-- Frequently used URL buttons -->
+    		<div class="mt-3">
+        	<button class="btn btn-outline-primary" onclick="setURL('http://mirteam.kr')">http://example1.com</button>
+        	<button class="btn btn-outline-primary" onclick="setURL('http://10.165.250.17:8090/')">http://example2.com</button>
+    		</div>
+	</div>
 
-        <p class="text-center step">STEP 3. Run!</p>
+	<script>
+    		function setURL(url) {
+        		document.getElementById('urlInput').value = url;
+    		}
+	</script>
+
+	<p class="text-center step">STEP 3. Enter Command to Run (e.g., whoami):</p>
+	<div>
+    		<label for="cmdInput">Enter Command:</label>
+    		<input type="text" id="cmdInput" class="form-control" placeholder="whoami">
+    
+    		<!-- Frequently used command buttons -->
+    		<div class="mt-3">
+        	<button class="btn btn-outline-primary" onclick="setCommand('whoami')">whoami</button>
+        	<button class="btn btn-outline-primary" onclick="setCommand('cat /etc/passwd/')">cat /etc/passwd</button>
+        	<button class="btn btn-outline-primary" onclick="setCommand('ps aux')">ps aux</button>
+    		</div>
+	</div>
+
+<script>
+    function setCommand(command) {
+        document.getElementById('cmdInput').value = command;
+    }
+</script>
+
+        <p class="text-center step">STEP 4. Run!</p>
         <div class="text-center">
             <button class="btn btn-danger" onclick="runAttack()">Run Attack</button>
             <button class="btn btn-success" onclick="savePDF()">Save as PDF</button>
@@ -133,6 +165,7 @@
 
         async function runAttack() {
             const url = document.getElementById('urlInput').value;
+            const cmd = document.getElementById('cmdInput').value;
 
             if (!attackType) {
                 alert("Please select an attack type.");
@@ -143,11 +176,16 @@
                 alert("Please enter a target URL.");
                 return;
             }
+            
+            if (!cmd) {
+            	alert("Please enter a command.");
+            	return;
+            }
 
             const response = await fetch(`/run-attack/${attackType}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url })
+                body: JSON.stringify({ url: url, cmd: cmd })
             });
 
             const result = await response.json();
@@ -174,7 +212,7 @@
                 link.href = window.URL.createObjectURL(blob);
                 link.download = 'attack_result.pdf';
                 link.click();
-            } else {
+            } else { 
                 alert("Failed to save PDF.");
             }
         }
