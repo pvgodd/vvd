@@ -123,9 +123,6 @@
     		function setURL(url) {
         		document.getElementById('urlInput').value = url;
     		}
-		window.onload = function () {
-        		document.getElementById('urlInput').value = '';
-		}
 	</script>
 
 	<p class="text-center step">STEP 3. Enter Command to Run (e.g., whoami):</p>
@@ -145,9 +142,6 @@
     		function setCommand(command) {
        			document.getElementById('cmdInput').value = command;
     		}
-		window.onload = function () {
-        		document.getElementById('cmdInput').value = '';
-		}
 	</script>
 
         <p class="text-center step">STEP 4. Run!</p>
@@ -224,6 +218,12 @@
                 alert("Failed to save PDF.");
             }
         }
+
+	window.onload = function () {
+            document.getElementById('urlInput').value = '';  // URL 입력 필드 초기화
+            document.getElementById('cmdInput').value = '';  // Command 입력 필드 초기화
+        }
+	    
     </script>
 </body>
 </html>
