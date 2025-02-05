@@ -123,6 +123,9 @@
     		function setURL(url) {
         		document.getElementById('urlInput').value = url;
     		}
+		window.onload = function () {
+        		document.getElementById('urlInput').value = '';
+		}
 	</script>
 
 	<p class="text-center step">STEP 3. Enter Command to Run (e.g., whoami):</p>
@@ -138,11 +141,14 @@
     		</div>
 	</div>
 
-<script>
-    function setCommand(command) {
-        document.getElementById('cmdInput').value = command;
-    }
-</script>
+	<script>
+    		function setCommand(command) {
+       			document.getElementById('cmdInput').value = command;
+    		}
+		window.onload = function () {
+        		document.getElementById('cmdInput').value = '';
+		}
+	</script>
 
         <p class="text-center step">STEP 4. Run!</p>
         <div class="text-center">
