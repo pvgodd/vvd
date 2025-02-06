@@ -192,9 +192,9 @@
 
             const result = await response.json();
             document.getElementById('output').textContent = result.output || result.error;
-        }
+            }
 
-        async function savePDF() {
+            async function savePDF() {
             const outputContent = document.getElementById('output').textContent;
 
             if (!outputContent) {
