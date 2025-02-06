@@ -179,10 +179,10 @@
                 return;
             }
             
-            if (!cmd) {
-            	alert("Please enter a command.");
-            	return;
-            }
+            //if (!cmd) {
+            //	alert("Please enter a command.");
+            //	return;
+            //}
 
             const response = await fetch(`/run-attack/${attackType}`, {
                 method: 'POST',
