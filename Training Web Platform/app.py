@@ -14,6 +14,7 @@ def index():
 @app.route('/select-attack')
 def select_attack():
     attacks = [
+    	"ALL",
         "Atlassian Confluence",
         "Apache Struts2",
         "Apache OFBiz",
@@ -26,6 +27,8 @@ def select_attack():
     ]
     return render_template('select_attack.html', attacks=attacks)
 
+REQUIRED_CMD_ATTACKS = ["Command Injection", "Reverse Shell"]
+
 # 공격 실행 API
 @app.route('/run-attack/<attack_type>', methods=['POST'])
 def run_attack(attack_type):
@@ -35,13 +38,17 @@ def run_attack(attack_type):
 
     if not url:
         return jsonify({"error": "URL is required"}), 400
-
-    if not cmd:
-        return jsonify({"error": "Command is required"}), 400
+    
+    if attack_type in REQUIRED_CMD_ATTACKS and not cmd:
+    	return jsonify({"error": f"Command is required for {attack_type}"}), 400
+    	
+    result = f"Executing attack: {attack_type} on {url} with command: {cmd or 'No Command'}"
 
     try:
         # 공격 종류에 따라 적합한 스크립트를 선택하여 명령어 실행
-        if attack_type == "Atlassian Confluence":
+        if attack_type == "ALL":
+            result = subprocess.run(['python3', 'tools/vvd.py', url], capture_output=True, text=True)
+        elif attack_type == "Atlassian Confluence":
             result = subprocess.run(['python3', 'tools/confluence_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Apache Struts2":
             result = subprocess.run(['python3', 'tools/struts2_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
