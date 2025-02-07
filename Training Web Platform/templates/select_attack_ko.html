@@ -155,75 +155,80 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="/static/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let attackType = "";
+	<script>
+    	let attackType = "";
 
-        function setAttackType(button, type) {
-            attackType = type;
-            const buttons = document.querySelectorAll('.list-group button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-        }
+    	function setAttackType(button, type) {
+        	attackType = type;
+        	const buttons = document.querySelectorAll('.list-group button');
+        	buttons.forEach(btn => btn.classList.remove('selected'));
+        	button.classList.add('selected');
+    	}
 
-        async function runAttack() {
-            const url = document.getElementById('urlInput').value;
-            const cmd = document.getElementById('cmdInput').value;
+    	async function runAttack() {
+        	const url = document.getElementById('urlInput').value;
+        	const cmd = document.getElementById('cmdInput').value;
 
-            if (!attackType) {
-                alert("Please select an attack type.");
-                return;
-            }
+        	if (!attackType) {
+            		alert("Please select an attack type.");
+            		return;
+        	}
 
-            if (!url) {
-                alert("Please enter a target URL.");
-                return;
-            }
-            
-            //if (!cmd) {
-            //	alert("Please enter a command.");
-            //	return;
-            //}
+        	if (!url) {
+            		alert("Please enter a target URL.");
+            		return;
+        	}
 
-            const response = await fetch(`/run-attack/${attackType}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url, cmd: cmd })
-            });
+        	const response = await fetch(`/run-attack/${attackType}`, {
+            		method: 'POST',
+            		headers: { 'Content-Type': 'application/json' },
+            		body: JSON.stringify({ url: url, cmd: cmd })
+        	});
 
-            const result = await response.json();
-            document.getElementById('output').textContent = result.output || result.error;
-            }
+        	const result = await response.json();
+        		document.getElementById('output').textContent = result.output || result.error;
 
-            async function savePDF() {
-            const outputContent = document.getElementById('output').textContent;
+        	// Reset input values and attack selection after execution
+        	resetInputs();
+    		}
 
-            if (!outputContent) {
-                alert("No output to save.");
-                return;
-            }
+    		function resetInputs() {
+        		document.getElementById('urlInput').value = '';
+        		document.getElementById('cmdInput').value = '';
+        		attackType = "";
 
-            const response = await fetch('/download-pdf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ output: outputContent })
-            });
+        		// Remove selected class from buttons
+        		document.querySelectorAll('.list-group button').forEach(btn => btn.classList.remove('selected'));
+    		}
 
-            if (response.ok) {
-                const blob = await response.blob();
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = 'attack_result.pdf';
-                link.click();
-            } else { 
-                alert("Failed to save PDF.");
-            }
-        }
+    		async function savePDF() {
+        		const outputContent = document.getElementById('output').textContent;
 
-	window.onload = function () {
-            document.getElementById('urlInput').value = '';  // URL 입력 필드 초기화
-            document.getElementById('cmdInput').value = '';  // Command 입력 필드 초기화
-        }
-	    
-    </script>
+        		if (!outputContent) {
+        		    alert("No output to save.");
+        		    return;
+        		}
+
+        	const response = await fetch('/download-pdf', {
+            		method: 'POST',
+            		headers: { 'Content-Type': 'application/json' },
+            		body: JSON.stringify({ output: outputContent })
+        	});
+
+        	if (response.ok) {
+        	    const blob = await response.blob();
+        	    const link = document.createElement('a');
+        	    link.href = window.URL.createObjectURL(blob);
+        	    link.download = 'attack_result.pdf';
+        	    link.click();
+        	} else { 
+        	    alert("Failed to save PDF.");
+        	}
+    	}
+
+    	window.onload = function () {
+        	resetInputs();
+    	}
+	</script>
 </body>
 </html>
