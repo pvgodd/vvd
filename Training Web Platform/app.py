@@ -23,6 +23,7 @@ def select_attack():
         "ProxyShell",
         "ProxyNotShell",
         "ShellShock",
+        "SQL Injection",
         "VMware"
     ]
     return render_template('select_attack.html', attacks=attacks)
@@ -53,19 +54,21 @@ def run_attack(attack_type):
         elif attack_type == "Apache Struts2":
             result = subprocess.run(['python3', 'tools/struts2_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "Apache OFBiz":
-            result = subprocess.run(['python3', 'tools/ofbiz_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/ofbiz_attack.py', '--url', url], capture_output=True, text=True)
         elif attack_type == "Cisco":
-            result = subprocess.run(['python3', 'tools/cisco_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/cisco_attack.py', '--url', url], capture_output=True, text=True)
         elif attack_type == "Citrix Bleed":
-            result = subprocess.run(['python3', 'tools/citrix_bleed_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/citrix_bleed_attack.py', '--url', url], capture_output=True, text=True)
         elif attack_type == "ProxyShell":
-            result = subprocess.run(['python3', 'tools/proxyshell_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/proxyshell_attack.py', '--url', url], capture_output=True, text=True)
         elif attack_type == "ProxyNotShell":
             result = subprocess.run(['python3', 'tools/proxynotshell_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
         elif attack_type == "ShellShock":
             result = subprocess.run(['python3', 'tools/shellshock_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+        elif attack_type == "SQL Injection":
+            result = subprocess.run(['python3', 'tools/sql_injection.py', '--url', url], capture_output=True, text=True)
         elif attack_type == "VMware":
-            result = subprocess.run(['python3', 'tools/vmware_attack.py', '--url', url, '--cmd', cmd], capture_output=True, text=True)
+            result = subprocess.run(['python3', 'tools/vmware_attack.py', '--url', url], capture_output=True, text=True)
         else:
             return jsonify({"error": "Invalid attack type"}), 400
 
