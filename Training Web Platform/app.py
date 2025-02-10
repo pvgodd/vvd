@@ -91,8 +91,9 @@ def download_pdf():
     # PDF 생성
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=12)
-    pdf.multi_cell(0, 10, output_content)
+    pdf.add_font('Nanum', '', '/usr/share/fonts/truetype/nanum/NanumGothic.ttf', uni=True)
+    pdf.set_font('Nanum', '', size=10)
+    pdf.multi_cell(200, 10, output_content)
 
     pdf_file = 'attack_result.pdf'
     pdf.output(pdf_file)
