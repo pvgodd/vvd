@@ -41,8 +41,8 @@ def run_attack(attack_type):
         return jsonify({"error": "URL is required"}), 400
     
     if attack_type in REQUIRED_CMD_ATTACKS and not cmd:
-    	return jsonify({"error": f"Command is required for {attack_type}"}), 400
-    	
+        return jsonify({"error": f"Command is required for {attack_type}"}), 400
+
     result = f"Executing attack: {attack_type} on {url} with command: {cmd or 'No Command'}"
 
     try:
@@ -84,6 +84,7 @@ def run_attack(attack_type):
 def download_pdf():
     data = request.get_json()
     output_content = data.get('output')
+    attack_type = data.get('attackType', 'unknown')
 
     if not output_content:
         return jsonify({"error": "No content to save"}), 400
@@ -93,13 +94,27 @@ def download_pdf():
     pdf.add_page()
     pdf.add_font('Nanum', '', '/usr/share/fonts/truetype/nanum/NanumGothic.ttf', uni=True)
     pdf.set_font('Nanum', '', size=10)
+    
+    # Add title with attack type
+    pdf.set_font('Nanum', '', size=16)
+    pdf.cell(200, 10, f'Attack Type: {attack_type}', ln=True, align='C')
+    pdf.set_font('Nanum', '', size=10)
+    pdf.ln(10)
+    
+    # Add content
     pdf.multi_cell(200, 10, output_content)
 
-    pdf_file = 'attack_result.pdf'
+    # Generate filename with attack type
+    pdf_file = f'attack_result_{attack_type}.pdf'
     pdf.output(pdf_file)
 
     # PDF 파일 다운로드 응답
-    return send_file(pdf_file, as_attachment=True)
+    response = send_file(pdf_file, as_attachment=True)
+    
+    # Clean up the file after sending
+    os.remove(pdf_file)
+    
+    return response
 
 # 서버 실행
 if __name__ == '__main__':
