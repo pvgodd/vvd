@@ -1,229 +1,266 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Select Attack</title>
-    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: Arial, sans-serif;
-        }
-        h1 {
-            text-align: center;
-            font-weight: bold;
-            color: white;
-            background-color: rgb(0, 157, 220);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-        }
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            margin-top: 40px;
-        }
-        .list-group button {
-            font-size: 18px;
-            padding: 12px;
-            margin-bottom: 10px;
-            border: none;
-            border-radius: 8px;
-            background-color: #e9ecef;
-            color: #333;
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .list-group button.selected {
-            background-color: rgb(0, 157, 220);
-            color: white;
-        }
-        #urlInput, #cmdInput {
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ced4da;
-            margin-top: 10px;
-        }
-        button {
-            font-size: 16px;
-            padding: 12px 24px;
-            border-radius: 8px;
-            border: none;
-            margin-top: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-        .btn-danger {
-            background-color: rgb(220, 53, 69);
-            color: white;
-        }
-        .btn-success {
-            background-color: rgb(40, 167, 69);
-            color: white;
-        }
-        .btn-danger:hover, .btn-success:hover {
-            opacity: 0.9;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-        pre {
-            background-color: #e9ecef;
-            padding: 20px;
-            border-radius: 8px;
-            overflow: visible;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .step {
-            font-weight: bold;
-            margin-top: 40px;
-            color: #333;
-            font-size: 20px;
-        }
-        .description {
-            background-color: #e9f7fc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 16px;
-            color: #333;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공격 유형 선택</title>
+  <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f6f9;
+      margin: 0;
+      display: flex;
+    }
+
+    aside {
+      width: 220px;
+      background-color: #343a40;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    aside h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    aside ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    aside ul li {
+      margin-bottom: 15px;
+    }
+
+    aside ul li a {
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    aside ul li a:hover {
+      color: white;
+    }
+
+    main {
+      flex-grow: 1;
+    }
+
+    header {
+      background-color: #009ddc;
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 36px;
+      font-weight: bold;
+    }
+
+    header p {
+      font-size: 18px;
+      margin-top: 10px;
+    }
+
+    section {
+      padding: 40px 30px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .feature-box {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .feature-box h3 {
+      color: #009ddc;
+      margin-bottom: 15px;
+    }
+
+    .list-group button {
+      font-size: 16px;
+      padding: 12px;
+      margin-bottom: 8px;
+      border: none;
+      border-radius: 8px;
+      background-color: #e9ecef;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .list-group button.selected {
+      background-color: #009ddc;
+      color: white;
+    }
+
+    input {
+      margin-top: 10px;
+    }
+
+    .cta {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .btn-action {
+      font-size: 18px;
+      padding: 14px 32px;
+      border-radius: 8px;
+      border: none;
+      margin: 0 10px;
+    }
+
+    .btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .btn-success {
+      background-color: #28a745;
+      color: white;
+    }
+
+    .btn-danger:hover,
+    .btn-success:hover {
+      opacity: 0.9;
+    }
+
+    pre {
+      background-color: #e9ecef;
+      padding: 20px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin-top: 30px;
+    }
+
+    .report-preview {
+      background-color: #fff3cd;
+      padding: 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Select an Attack Category</h1>
-        <p class="description">Follow the steps below to choose and run a simulated attack. This exercise will help you enhance your incident response skills.</p>
-        <p class="text-center step">STEP 1. Choose the type of attack you want to simulate.</p>
-        <div class="list-group" id="attackList">
-            {% for attack in attacks %}
-            <button class="list-group-item list-group-item-action" onclick="setAttackType(this, '{{ attack }}')">{{ attack }}</button>
-            {% endfor %}
-        </div>
 
-	<p class="text-center step">STEP 2. Enter the target URL.</p>
-	<div>
-    		<label for="urlInput">Enter Target URL:</label>
-    		<input type="text" id="urlInput" class="form-control" placeholder="http://mirteam.kr">
-    
-    		<!-- Frequently used URL buttons -->
-    		<div class="mt-3">
-        	<button class="btn btn-outline-primary" onclick="setURL('http://mirteam.kr')">http://mirteam.kr</button>
-        	<button class="btn btn-outline-primary" onclick="setURL('http://10.165.250.17:8090/')">http://10.165.250.17:8090/</button>
-    		</div>
-	</div>
+<aside>
+  <h2>Navigation</h2>
+  <ul>
+    <li><a href="/">홈</a></li>
+    <li><a href="/select-attack">공격 시나리오</a></li>
+  </ul>
+</aside>
 
-	<script>
-    		function setURL(url) {
-        		document.getElementById('urlInput').value = url;
-    		}
-	</script>
+<main>
+  <header>
+    <h1>공격 시나리오 선택</h1>
+    <p>시뮬레이션을 위한 공격 유형과 타겟 정보를 입력하세요.</p>
+  </header>
 
-	<p class="text-center step">STEP 3. Enter Command to Run (e.g., whoami):</p>
-	<div>
-    		<label for="cmdInput">Enter Command:</label>
-    		<input type="text" id="cmdInput" class="form-control" placeholder="whoami">
-    
-    		<!-- Frequently used command buttons -->
-    		<div class="mt-3">
-        	<button class="btn btn-outline-primary" onclick="setCommand('whoami')">whoami</button>
-        	<button class="btn btn-outline-primary" onclick="setCommand('cat /etc/passwd')">cat /etc/passwd</button>
-        	<button class="btn btn-outline-primary" onclick="setCommand('ps aux')">ps aux</button>
-    		</div>
-	</div>
-
-	<script>
-    		function setCommand(command) {
-       			document.getElementById('cmdInput').value = command;
-    		}
-	</script>
-
-        <p class="text-center step">STEP 4. Run!</p>
-        <div class="text-center">
-            <button class="btn btn-danger" onclick="runAttack()">Run Attack</button>
-            <button class="btn btn-success" onclick="savePDF()">Save as PDF</button>
-        </div>
-
-        <pre id="output" class="mt-4 bg-light p-3"></pre>
+  <section>
+    <div class="feature-box">
+      <h3>STEP 1. 공격 유형 선택</h3>
+      <div class="list-group" id="attackList">
+        {% for attack in attacks %}
+        <button class="list-group-item list-group-item-action"
+          onclick="setAttackType(this, '{{ attack }}')"
+          data-bs-toggle="tooltip" title="이 공격은 {{ attack }} 유형의 행위를 시뮬레이션합니다.">
+          {{ attack }}
+        </button>
+        {% endfor %}
+      </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="/static/js/bootstrap.bundle.min.js"></script>
-    <script>
-        let attackType = "";
+    <div class="feature-box">
+      <h3>STEP 2. 타겟 URL 입력</h3>
+      <label for="urlInput">공격 대상 URL:</label>
+      <input type="text" id="urlInput" class="form-control" placeholder="http://example.com">
+    </div>
 
-        function setAttackType(button, type) {
-            attackType = type;
-            const buttons = document.querySelectorAll('.list-group button');
-            buttons.forEach(btn => btn.classList.remove('selected'));
-            button.classList.add('selected');
-        }
+    <div class="feature-box">
+      <h3>STEP 3. 명령어 입력</h3>
+      <label for="cmdInput">실행할 명령어:</label>
+      <input type="text" id="cmdInput" class="form-control" placeholder="whoami">
+    </div>
 
-        async function runAttack() {
-            const url = document.getElementById('urlInput').value;
-            const cmd = document.getElementById('cmdInput').value;
+    <div class="feature-box">
+      <h3>STEP 4. 공격 실행</h3>
+      <div class="cta">
+        <button class="btn-action btn-danger" onclick="runAttack()">공격 실행</button>
+        <button class="btn-action btn-success" onclick="savePDF()">PDF 저장</button>
+      </div>
+    </div>
 
-            if (!attackType) {
-                alert("Please select an attack type.");
-                return;
-            }
+    <pre id="output"></pre>
+  </section>
+</main>
 
-            if (!url) {
-                alert("Please enter a target URL.");
-                return;
-            }
-            
-            if (!cmd) {
-            	alert("Please enter a command.");
-            	return;
-            }
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<script>
+  let attackType = "";
+  let lastUsedAttackType = "";
 
-            const response = await fetch(`/run-attack/${attackType}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url, cmd: cmd })
-            });
+  function setAttackType(button, type) {
+    attackType = type;
+    lastUsedAttackType = type;
+    document.querySelectorAll('.list-group button').forEach(btn => btn.classList.remove('selected'));
+    button.classList.add('selected');
+  }
 
-            const result = await response.json();
-            document.getElementById('output').textContent = result.output || result.error;
-        }
+  async function runAttack() {
+    const url = document.getElementById('urlInput').value;
+    const cmd = document.getElementById('cmdInput').value;
+    if (!attackType || !url) {
+      alert("공격 유형과 URL을 모두 입력해주세요.");
+      return;
+    }
 
-        async function savePDF() {
-            const outputContent = document.getElementById('output').textContent;
+    const response = await fetch(`/run-attack/${attackType}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url, cmd })
+    });
+    const result = await response.json();
+    document.getElementById('output').textContent = result.output || result.error;
+  }
 
-            if (!outputContent) {
-                alert("No output to save.");
-                return;
-            }
+  async function savePDF() {
+    const outputContent = document.getElementById('output').textContent;
+    if (!outputContent || !lastUsedAttackType) {
+      alert("결과 출력 또는 공격 유형이 없습니다.");
+      return;
+    }
 
-            const response = await fetch('/download-pdf', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ output: outputContent })
-            });
+    const response = await fetch('/download-pdf', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ output: outputContent, attackType: lastUsedAttackType })
+    });
 
-            if (response.ok) {
-                const blob = await response.blob();
-                const link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = 'attack_result.pdf';
-                link.click();
-            } else { 
-                alert("Failed to save PDF.");
-            }
-        }
+    if (response.ok) {
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = `attack_result_${lastUsedAttackType}.pdf`;
+      link.click();
+    } else {
+      alert("PDF 저장 실패");
+    }
+  }
 
-	window.onload = function () {
-            document.getElementById('urlInput').value = '';  // URL 입력 필드 초기화
-            document.getElementById('cmdInput').value = '';  // Command 입력 필드 초기화
-        }
-	    
-    </script>
+  window.onload = () => {
+    [...document.querySelectorAll('[data-bs-toggle="tooltip"]')].forEach(el => new bootstrap.Tooltip(el));
+  }
+</script>
+
 </body>
 </html>
